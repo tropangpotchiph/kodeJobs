@@ -29,26 +29,33 @@ use App\Http\Controllers\ListingController;
 //All listings
 Route::get('/', [ListingController::class, 'index']);
 
-//Show Create Form
-Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth');
+Route::middleware('auth')->group(function() {
+    //Show Create Form
+    Route::get('/listings/create', [ListingController::class, 'create']);
+    //Store Listing data
+    Route::post('/listings', [ListingController::class, 'store']);
+    //Show Edit Form
+    Route::get('/listings/{listing}/edit', [ListingController::class, 'edit']);
+    //Update Listing
+    Route::put('/listings/{listing}', [ListingController::class, 'update']);
+    //Delete Listing
+    Route::delete('/listings/{listing}', [ListingController::class, 'destroy']);
+    //Manage Job Listings
+    Route::get('/listings/manage',[ListingController::class, 'manage']);
+    //Log out User
+    Route::post('/logout', [UserController::class, 'logout']);
 
-//Store Listing data
-Route::post('/listings', [ListingController::class, 'store'])->middleware('auth');
-
-//Show Edit Form
-Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])->middleware('auth');
-
-//Update Listing
-Route::put('/listings/{listing}', [ListingController::class, 'update'])->middleware('auth');
-
-//Delete Listing
-Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->middleware('auth');
-
-//Manage Job Listings
-Route::get('/listings/manage',[ListingController::class, 'manage'])->middleware('auth');
+});
 
 //Single Listing
 Route::get('/listings/{listing}', [ListingController::class, 'show']);
+
+
+
+
+
+
+
 
 //Show Register/Create Form
 Route::get('/register', [UserController::class, 'create'])->middleware('guest');
@@ -56,8 +63,6 @@ Route::get('/register', [UserController::class, 'create'])->middleware('guest');
 //Create New User
 Route::post('/users', [UserController::class, 'store']);
 
-//Log out User
-Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
 
 //Show login Form
 Route::get('/login', [UserController::class, 'login'])->name('login')->middleware('guest');
