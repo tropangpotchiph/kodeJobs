@@ -50,6 +50,8 @@ class ListingController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos','public');
         }
 
+        $formFields['user_id'] = auth()->id();
+
         Listing::create($formFields);
 
         return redirect('/')->with('message', 'Job Posting created successfully!');
@@ -64,6 +66,10 @@ class ListingController extends Controller
     //Update Listing Data
     public function update(Request $request, Listing $listing) {
         // dd($request->file('logo'));
+
+        if($listing->user_id != auth()->id()){
+            abort(403, 'Unauthorized Action');
+        }
 
         $formFields = $request->validate([
             'title' => 'required',
@@ -90,5 +96,8 @@ class ListingController extends Controller
         return redirect('/')->with('message', 'Job Listing deleted successfully!');
     }
 
-
+    //Manage Listings
+    public function manage() {
+        return view('listings.manage',['listings' => auth()->user()->listings()->get()]);
+    }
 }
